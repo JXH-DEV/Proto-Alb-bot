@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistenti Digjital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        albania: {
+                            red: '#E41E20', 
+                            dark: '#0a0a0a', 
+                            charcoal: '#1a1a1a',
+                            bubbleBot: '#262626',
+                        }
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.4s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { 
+            background-color: #050505; 
+            color: #f5f5f5;
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #E41E20; }
+        
+        
+        .typing-dot {
+            animation: bounce 1.4s infinite ease-in-out both;
+            background-color: #E41E20;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        
+        .bg-pattern {
+            background-image: radial-gradient(#E41E20 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.05;
+        }
+    </style>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="h-screen flex flex-col overflow-hidden bg-albania-dark relative">
+
+    
+    <div class="absolute inset-0 bg-pattern pointer-events-none"></div>
+    <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-red-900/20 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-red-900/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+    
+    <header class="relative z-20 flex items-center justify-between px-4 sm:px-6 py-4 bg-albania-charcoal/80 backdrop-blur-xl border-b border-white/5 shadow-md">
+        <div class="flex items-center gap-4">
+            <div class="bg-albania-red p-2.5 rounded-lg shadow-[0_0_15px_rgba(228,30,32,0.4)] flex items-center justify-center">
+                
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M16 8a4 4 0 0 0-3.32-1.78l-1.38-2.74a1 1 0 0 0-1.6 0L8.32 6.22A4 4 0 0 0 5 10c0 2.21 1.79 4 4 4v6l3-3 3 3v-6a4 4 0 0 0 4-4Z"/></svg>
+            </div>
+            <div>
+                <h1 class="font-bold text-white tracking-wide text-lg hidden sm:block">Asistenti Digjital</h1>
+                <h1 class="font-bold text-white tracking-wide text-lg sm:hidden">Asistenti</h1>
+                <p class="text-[11px] text-red-400 font-medium uppercase tracking-widest">Gjuha Shqipe</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <button id="glossary-btn" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-xs sm:text-sm text-gray-300 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                Udhëzues
+            </button>
+            <div class="flex items-center border-l border-white/10 pl-4">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse mr-2"></span>
+                <span class="text-xs text-gray-400 hidden sm:inline">Online</span>
+            </div>
+        </div>
+    </header>
+
+    <main id="chat-container" class="relative z-10 flex-1 overflow-y-auto px-4 sm:px-6 py-6 scroll-smooth">
+        <div id="messages-list" class="max-w-3xl mx-auto flex flex-col justify-end min-h-0 pb-4">
+            
+        </div>
+        
+        
+        <div id="typing-indicator" class="hidden max-w-3xl mx-auto w-full mb-8 pl-2">
+            <div class="flex items-end gap-3">
+                <div class="bg-albania-bubbleBot border border-white/5 px-4 py-3 rounded-2xl rounded-bl-none flex items-center gap-1.5 shadow-lg">
+                    <span class="w-1.5 h-1.5 rounded-full typing-dot"></span>
+                    <span class="w-1.5 h-1.5 rounded-full typing-dot"></span>
+                    <span class="w-1.5 h-1.5 rounded-full typing-dot"></span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    
+    <footer class="relative z-20 p-4 bg-albania-charcoal/90 backdrop-blur-xl border-t border-white/5">
+        <div class="max-w-3xl mx-auto">
+            <form id="chat-form" class="relative flex items-center gap-3">
+                <input 
+                    id="user-input" 
+                    type="text" 
+                    placeholder="Shkruaj përgjigjen tënde..." 
+                    class="w-full bg-[#0F0F0F] text-gray-100 placeholder-gray-500 rounded-xl py-4 pl-5 pr-14 border border-white/10 focus:outline-none focus:ring-1 focus:ring-albania-red focus:border-albania-red transition-all shadow-inner font-light"
+                    autocomplete="off"
+                >
+                <button 
+                    type="submit" 
+                    id="send-btn"
+                    class="absolute right-2.5 p-2 bg-albania-red text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[0_4px_14px_0_rgba(228,30,32,0.39)] hover:shadow-[0_6px_20px_rgba(228,30,32,0.23)] hover:-translate-y-0.5"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                </button>
+            </form>
+            <div class="text-center mt-3 flex justify-center items-center gap-2 opacity-30 hover:opacity-100 transition-opacity duration-300">
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold">
+                    Shkolla "Lasgush Poradeci"
+                </p>
+                <span class="text-red-500">•</span>
+                <p class="text-[10px] text-gray-400 font-serif italic">2026</p>
+            </div>
+        </div>
+    </footer>
+
+    
+    <div id="glossary-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      
+        <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity opacity-0" id="glossary-backdrop"></div>
+
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <div id="glossary-panel" class="relative transform overflow-hidden rounded-2xl bg-[#1a1a1a] border border-white/10 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg opacity-0 scale-95">
+                    <div class="bg-albania-red/10 px-4 py-3 sm:px-6 border-b border-white/10 flex justify-between items-center">
+                        <h3 class="text-lg font-semibold leading-6 text-white flex items-center gap-2" id="modal-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-400"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                            Udhëzues Gramatikor
+                        </h3>
+                        <button id="close-glossary" class="text-gray-400 hover:text-white transition-colors p-1 rounded-md hover:bg-white/5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 18 18"/></svg>
+                        </button>
+                    </div>
+                    <div class="px-4 py-5 sm:p-6 max-h-[60vh] overflow-y-auto custom-scroll">
+                        <div id="glossary-content" class="space-y-4">
+                          
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        const INITIAL_MESSAGE_TEXT = "Bashkë mund të komunikojmë vetëm në gjuhën shqipe. A dëshiron të vazhdojmë?";
+        
+        const MOTIVATIONAL_QUOTES = [
+            "Të gjitha ëndrrat tona mund të bëhen realitet nëse kemi guximin t'i ndjekim ato.",
+            "E vetmja mënyrë për të bërë punë të madhe është ta duash atë që bën.",
+            "Nuk ka rëndësi sa ngadalë ecën, për sa kohë që nuk ndalon.",
+            "Bëhu ndryshimi që dëshiron të shohësh në botë.",
+            "Çdo ditë është një mundësi e re për të qenë më i mirë se dje.",
+            "Dielli lind sërish pas çdo stuhie."
+        ];
+
+        
+        const SYNTAX_DATA = {
+            kryefjala: {
+                keywords: ["kryefjala", "kryefjal"],
+                def: "<strong>Kryefjala</strong> është gjymtyra kryesore e fjalisë që shënon frymorin a sendin i cili kryen veprimin ose që ka tiparin e shprehur nga kallëzuesi.",
+                shprehet: "<strong>Kryefjala shprehet:</strong><br>a) me <strong>emër</strong> – <em>Shiu vazhdonte të binte lehtë e gëzueshëm.</em><br>b) me <strong>përemër</strong> – <em>Lirinë nuk ua solla unë, po e gjeta në mes jush.</em><br>c) me <strong>grup emëror</strong> – <em>Midis reve, herë pas here ndriçonte tokën dielli pranveror.</em><br>d) me <strong>pjesë të nënrenditur ftilluese</strong> – <em>Mendohet se ky qytet është një vendbanim i lashtë.</em>",
+                llojet: null, 
+                question: "A dëshiron të dish se me çfarë shprehet?"
+            },
+            kallezuesi: {
+                keywords: ["kallëzuesi", "kallezuesi", "kallëzues", "kallezues"],
+                def: "<strong>Kallëzuesi</strong> është gjymtyra kryesore e fjalisë që tregon një veprim a një gjendje të kryefjalës.",
+                llojet: "<strong>Klasifikimi i kallëzuesve sipas mënyrës së shprehjes:</strong><br>a) <strong>Kallëzues emëror</strong> – <em>Ai është njeri i besës.</em><br>b) <strong>Kallëzues i thjeshtë foljor</strong> – <em>Drita e mëngjesit po mbulonte tokën e përgjumur.</em><br>c) <strong>Kallëzues i përbërë foljor</strong> – <em>Ajo filloi të shkruante librin e parë.</em>",
+                shprehet: "<strong>Mënyra e formimit:</strong><br>• <strong>Kallëzues emëror:</strong> folja ‘jam/është- këpuja’ + gjymtyra emërore ‘njeri i besës’ (GE).<br>• <strong>Kallëzues i thjeshtë foljor:</strong> folje në kohët e thjeshta ose kohë të përbëra.<br>• <strong>Kallëzues i përbërë foljor:</strong> folje aspektore (filloj, zë, nis...) ose folje modale (mund, duhet, do) + folje në lidhore, forma të pashtjelluara ose emra prejfoljor asnjanës.",
+                question: "A dëshiron të dish llojet apo me çfarë shprehet?"
+            },
+            percaktori: {
+                keywords: ["përcaktori", "percaktori", "përcaktor", "percaktor"],
+                def: "<strong>Përcaktori</strong> është gjymtyrë e dytë e fjalisë, pjesë e grupit emëror.",
+                llojet: "<strong>Llojet e përcaktorëve:</strong><br>1. Përcaktori me përshtatje.<br>2. Përcaktori me drejtim.<br>3. Përcaktori me bashkim.",
+                shprehet: "<strong>1. Përcaktori me përshtatje shprehet:</strong><br>a) me mbiemër – <em>Uji po rridhte me një zhurmë ritmike.</em><br>b) me përemër – <em>Motra e saj fliste aq bukur!</em><br>c) me numëror – <em>Ata janë tre shokë të mirë.</em><br><br><strong>2. Përcaktori me drejtim shprehet:</strong><br>a) Me emër në rasën emërore me parafjalë – <em>Vajza nga Tirana fitoi vendin e parë në konkurs.</em><br>b) Me emër në rasën gjinore – <em>Vargu i njerëzve nuk kishte të mbaruar.</em><br>c) Me emër në rasën kallëzore – <em>Në mbrëmje shijova një gotë verë me miqtë e mi.</em><br>d) Me emër në rasën rrjedhore – <em>Ajo dukej e brishtë si një gotë kristali.</em><br><br><strong>3. Përcaktori me bashkim shprehet:</strong><br>a) me formë të pashtjelluar pjesore – <em>Dy aktorë mbuluar me pelerina filluan të dialogonin.</em><br>b) me formë të pashtjelluar paskajore – <em>Dëshira për të studiuar ishte e ethshme.</em><br>c) me ndajfolje – <em>Klasa përballë është e motrës sime.</em>",
+                question: "A dëshiron të dish llojet apo me çfarë shprehet?"
+            },
+            kundrinori: {
+                keywords: ["kundrinori", "kundrinor"],
+                def: "<strong>Kundrinori</strong> është gjymtyrë e dytë që tregon objektin mbi të cilin bie veprimi i foljes.",
+                llojet: "<strong>Llojet:</strong><br>• Kundrinor i drejtë (pa parafjalë).<br>• Kundrinor i zhdrejtë (me ose pa parafjalë).",
+                shprehet: "<strong>Shprehet me:</strong><br>• Emër, përemër ose grup emëror.",
+                question: "A dëshiron të dish llojet apo me çfarë shprehet?"
+            }
+        };
+
+        const GLOSSARY_TERMS = [
+            { term: "Sintaksa", def: "Pjesë e gramatikës që studion ndërtimin e fjalive dhe marrëdhëniet mes fjalëve." },
+            { term: "Kryefjala", def: "Gjymtyrë kryesore që tregon kush e kryen veprimin ose për kë flitet në fjali." },
+            { term: "Kallëzuesi", def: "Gjymtyrë kryesore që tregon veprimin apo gjendjen e kryefjalës." },
+            { term: "Kundrinori", def: "Gjymtyrë e dytë mbi të cilën bie veprimi i foljes." },
+            { term: "Përcaktori", def: "Gjymtyrë e dytë që shërben për të përcaktuar (cilësuar) emrin bërthamë." },
+            { term: "Rrethanori", def: "Gjymtyrë e dytë që tregon rrethanën e kryerjes së veprimit (kohë, vend, mënyrë etj.)." },
+            { term: "Folja", def: "Pjesë e ligjëratës që tregon veprim ose gjendje (psh: <em>punoj, jam</em>)." },
+            { term: "Emri", def: "Pjesë e ligjëratës që emërton frymorë, sende, vende ose dukuri (psh: <em>Tirana, djalë</em>)." },
+            { term: "Mbiemri", def: "Pjesë e ligjëratës që tregon një cilësi të emrit (psh: <em>i bukur, e lartë</em>)." }
+        ];
+
+   
+        let step = 0; 
+        let activeTopic = null;
+        let subContext = null; 
+        let isTyping = false;
+
+        
+        const messagesList = document.getElementById('messages-list');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const chatContainer = document.getElementById('chat-container');
+
+        
+        const glossaryBtn = document.getElementById('glossary-btn');
+        const glossaryModal = document.getElementById('glossary-modal');
+        const glossaryBackdrop = document.getElementById('glossary-backdrop');
+        const glossaryPanel = document.getElementById('glossary-panel');
+        const closeGlossaryBtn = document.getElementById('close-glossary');
+        const glossaryContent = document.getElementById('glossary-content');
+
+       
+        function getGreeting() {
+            const h = new Date().getHours();
+            if (h >= 5 && h < 12) return "Mirëmëngjes";
+            if (h >= 12 && h < 18) return "Mirëdita";
+            return "Mirëmbrëma";
+        }
+
+        function getFullIntro() {
+            return `<strong class="text-red-400 text-lg">${getGreeting()}!</strong><br>${INITIAL_MESSAGE_TEXT}`;
+        }
+
+        window.onload = () => {
+            
+            renderGlossary();
+
+            
+            setTimeout(() => {
+                appendMessage('bot', getFullIntro());
+            }, 500);
+            userInput.focus();
+        };
+
+        
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = userInput.value.trim();
+            if (!text || isTyping || step === 4) return;
+
+            
+            appendMessage('user', text);
+            userInput.value = '';
+            
+            
+            processBotResponse(text);
+        });
+
+      
+        glossaryBtn.addEventListener('click', openGlossary);
+        closeGlossaryBtn.addEventListener('click', closeGlossary);
+        glossaryBackdrop.addEventListener('click', closeGlossary);
+
+        function openGlossary() {
+            glossaryModal.classList.remove('hidden');
+            setTimeout(() => {
+                glossaryBackdrop.classList.remove('opacity-0');
+                glossaryPanel.classList.remove('opacity-0', 'scale-95');
+                glossaryPanel.classList.add('opacity-100', 'scale-100');
+            }, 10);
+        }
+
+        function closeGlossary() {
+            glossaryBackdrop.classList.add('opacity-0');
+            glossaryPanel.classList.add('opacity-0', 'scale-95');
+            glossaryPanel.classList.remove('opacity-100', 'scale-100');
+            setTimeout(() => {
+                glossaryModal.classList.add('hidden');
+            }, 300);
+        }
+
+        function renderGlossary() {
+            glossaryContent.innerHTML = GLOSSARY_TERMS.map((item, index) => `
+                <div class="p-3 bg-white/5 rounded-lg border border-white/5 hover:border-red-500/30 transition-colors group">
+                    <h4 class="text-red-400 font-bold mb-1 group-hover:text-red-300 transition-colors">${item.term}</h4>
+                    <p class="text-gray-300 text-sm leading-relaxed">${item.def}</p>
+                </div>
+            `).join('');
+        }
+
+        
+        async function processBotResponse(userText) {
+            showTyping(true);
+            
+            
+            const delay = 1000 + Math.random() * 800;
+            await new Promise(r => setTimeout(r, delay));
+
+            const lowerText = userText.toLowerCase();
+            const isPositive = lowerText === 'po' || lowerText.includes('po ') || lowerText.includes(' po') || lowerText.includes('sigurisht');
+            
+            
+            const isRefusal = lowerText === 'jo' || 
+                            lowerText.includes('jo ') || 
+                            lowerText.includes(' jo') || 
+                            lowerText.includes('s\'dua') || 
+                            lowerText.includes('nuk dua') || 
+                            lowerText.includes('nuk kam deshire') ||
+                            lowerText.includes('nuk kam dëshirë') ||
+                            lowerText.includes('nuk dua te flas') ||
+                            lowerText.includes('nuk dua të flas') ||
+                            lowerText.includes('nuk dua te tregoj') ||
+                            lowerText.includes('nuk dua të tregoj');
+
+            let response = "";
+
+            
+            if (step === 0) {
+               
+                if (isPositive) {
+                    
+                    step = 1; 
+                    response = "Më vjen mirë. A dëshiron të vazhdojmë me pyetjet?";
+                } else {
+                    
+                    step = 5; 
+                    response = "E kuptoj. Dëshiron të ndash me mua një gjë të bukur që të ka ndodhur sot?";
+                }
+            }
+            else if (step === 5) {
+                
+                if (isPositive) {
+                    step = 6;
+                    response = "Po të dëgjoj. Të lutem më trego. 👂";
+                } else {
+                    
+                    step = 4; 
+                    const quote = MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
+                    response = `E kuptoj heshtjen tënde. Ndonjëherë fjalët nuk janë të nevojshme.<br><br>
+                                <em class="block mb-2">"${quote}"</em><br>
+                                <strong>Unë jam këtu në çdo moment për të të ndihmuar.</strong>`;
+                    setTimeout(initiateAutoRestart, 2500);
+                }
+            }
+            else if (step === 6) {
+               
+                step = 4; 
+                const quote = MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
+                
+                response = `Sa gjë e bukur! Më vjen mirë që e ndave këtë moment me mua. Është vërtet frymëzuese. 🤍<br><br>
+                            <em class="block mb-2">"${quote}"</em><br>
+                            <strong>Unë jam këtu në çdo moment për të të ndihmuar.</strong>`;
+                setTimeout(initiateAutoRestart, 2500);
+            }
+            else if (step === 1) {
+                
+                if (isPositive) {
+                    
+                    step = 3; 
+                    response = "Shkëlqyeshëm! Mund të më pyesësh rreth <strong>sintaksës së gjuhës shqipe</strong>.";
+                } else {
+                    
+                    step = 2; 
+                    response = "Mirë. Atëherë më thuaj një gjë të bukur që të ka ndodhur sot?";
+                }
+            }
+            else if (step === 3) {
+                
+                
+                
+                if (lowerText.includes('mjaft') || lowerText.includes('stop') || lowerText.includes('jo') || lowerText.includes('faleminderit')) {
+                    step = 2;
+                    activeTopic = null;
+                    subContext = null;
+                    response = "Kënaqësi të bisedonim për gjuhën! Atëherë më thuaj një gjë të bukur që të ka ndodhur sot?";
+                } 
+                else {
+                    
+                    let newTopicKey = null;
+                    for (const key in SYNTAX_DATA) {
+                        if (SYNTAX_DATA[key].keywords.some(k => lowerText.includes(k))) {
+                            newTopicKey = key;
+                            break;
+                        }
+                    }
+
+                    if (newTopicKey) {
+                        activeTopic = newTopicKey;
+                        subContext = null; 
+                        const data = SYNTAX_DATA[newTopicKey];
+                        response = `${data.def}<br><br><span class="text-red-300 italic">${data.question}</span>`;
+                    } 
+                    else if (activeTopic) {
+                        
+                        const data = SYNTAX_DATA[activeTopic];
+                        const isAffirmation = lowerText === 'po' || lowerText.includes('po ') || lowerText.includes(' po') || lowerText.includes('sigurisht') || lowerText.includes('dua');
+                        const isNegation = lowerText === 'jo' || lowerText.includes('jo ') || lowerText.includes(' jo') || lowerText.includes('nuk') || lowerText.includes('tjeter');
+
+                        if (isNegation) {
+                           
+                            activeTopic = null;
+                            subContext = null;
+                            response = "Në rregull. Mund të vazhdojmë me elemente të tjera të sintaksës (Kallëzuesi, Përcaktori, Kundrinori). Për cilën dëshiron të dish më shumë?";
+                        }
+                        else if (lowerText.includes('lloj') || lowerText.includes('klasifikim')) {
+                           
+                            response = data.llojet ? data.llojet : "Për këtë gjymtyrë nuk kemi klasifikim llojesh.";
+                            
+                            
+                            if (data.shprehet && subContext !== 'shprehet') {
+                                response += "<br><br><span class='text-red-300 italic'>A dëshiron të dish gjithashtu se me çfarë shprehet?</span>";
+                                subContext = 'llojet'; 
+                                
+                            } else {
+                                activeTopic = null;
+                                subContext = null;
+                                response += "<br><br>Dëshiron të pyesësh për ndonjë gjymtyrë tjetër?";
+                            }
+                        } 
+                        else if (lowerText.includes('shpreh') || lowerText.includes('formo') || lowerText.includes('behet')) {
+                            
+                            response = data.shprehet ? data.shprehet : "Më fal, nuk kam informacion specifik për shprehjen e saj.";
+
+                            
+                            if (data.llojet && subContext !== 'llojet') {
+                                response += "<br><br><span class='text-red-300 italic'>A dëshiron të dish gjithashtu llojet?</span>";
+                                subContext = 'shprehet'; 
+                            } else {
+                                activeTopic = null;
+                                subContext = null;
+                                response += "<br><br>Dëshiron të pyesësh për ndonjë gjymtyrë tjetër?";
+                            }
+                        }
+                        else if (isAffirmation) {
+                            
+                            if (subContext === 'llojet' && data.shprehet) {
+                                response = data.shprehet;
+                                activeTopic = null; 
+                                subContext = null;
+                                response += "<br><br>Dëshiron të pyesësh për ndonjë gjymtyrë tjetër?";
+                            }
+                            else if (subContext === 'shprehet' && data.llojet) {
+                                response = data.llojet;
+                                activeTopic = null;
+                                subContext = null;
+                                response += "<br><br>Dëshiron të pyesësh për ndonjë gjymtyrë tjetër?";
+                            }
+                            else {
+                                
+                                if (data.llojet && data.shprehet) {
+                                    response = data.llojet + "<br><br>" + data.shprehet;
+                                } else if (data.llojet) {
+                                    response = data.llojet;
+                                } else {
+                                    response = data.shprehet;
+                                }
+                                activeTopic = null;
+                                subContext = null;
+                                response += "<br><br>Dëshiron të pyesësh për ndonjë gjymtyrë tjetër?";
+                            }
+                        }
+                        else {
+                            
+                            response = "Më fal, nuk të kuptova qartë. A dëshiron të dish <strong>llojet</strong>, <strong>me çfarë shprehet</strong>, apo të flasim për një gjymtyrë tjetër?";
+                        }
+                    } else {
+                        
+                        response = `Nuk të kuptova qartë. Mund të pyesësh për:
+                                    <span class="text-red-400">Kryefjalën</span>, 
+                                    <span class="text-red-400">Kallëzuesin</span>, 
+                                    <span class="text-red-400">Përcaktorin</span> ose 
+                                    <span class="text-red-400">Kundrinorin</span>.`;
+                    }
+                }
+            } 
+            else if (step === 2) {
+              
+                step = 4; 
+                const quote = MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
+                
+                if (isRefusal) {
+                    response = `E kuptoj heshtjen tënde. Ndonjëherë fjalët nuk janë të nevojshme. 🤍<br><br>
+                                <em class="block mb-2">"${quote}"</em>
+                                <br><strong>Unë jam këtu në çdo moment për të të ndihmuar.</strong>`;
+                } else {
+                    response = `Sa gjë e bukur! Faleminderit që e ndave këtë moment me mua. 🤍<br><br>
+                                <em class="block mb-2">"${quote}"</em>
+                                <br><strong>Unë jam këtu në çdo moment për të të ndihmuar.</strong>`;
+                }
+                
+                setTimeout(initiateAutoRestart, 2500);
+            }
+
+            showTyping(false);
+            appendMessage('bot', response);
+        }
+
+        
+        function initiateAutoRestart() {
+            userInput.disabled = true;
+            userInput.placeholder = "Biseda po rifillon...";
+            document.getElementById('send-btn').classList.add('opacity-50');
+
+            setTimeout(() => {
+                messagesList.style.opacity = '0';
+                messagesList.style.transition = 'opacity 0.5s ease';
+                
+                setTimeout(() => {
+                    messagesList.innerHTML = '';
+                    messagesList.style.opacity = '1';
+                    step = 0;
+                    activeTopic = null;
+                    subContext = null;
+                    userInput.disabled = false;
+                    userInput.placeholder = "Shkruaj përgjigjen tënde...";
+                    userInput.value = '';
+                    document.getElementById('send-btn').classList.remove('opacity-50');
+                    
+                    appendMessage('bot', getFullIntro());
+                }, 500);
+            }, 7000);
+        }
+
+       
+        function appendMessage(sender, htmlText) {
+            const isBot = sender === 'bot';
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex w-full mb-6 animate-slide-up ${isBot ? 'justify-start' : 'justify-end'}`;
+
+            const inner = document.createElement('div');
+            inner.className = `flex max-w-[85%] md:max-w-[70%] ${isBot ? 'flex-row' : 'flex-row-reverse'} items-end gap-3`;
+
+            const avatar = document.createElement('div');
+            avatar.className = `flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-lg ${isBot ? 'bg-albania-charcoal border border-white/10 text-red-500' : 'bg-albania-red text-white'}`;
+            avatar.innerHTML = isBot 
+                ? '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>'
+                : '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+
+            const bubble = document.createElement('div');
+            bubble.className = `px-5 py-3.5 rounded-2xl text-[15px] leading-relaxed shadow-md transition-all ${
+                isBot 
+                ? 'bg-albania-bubbleBot text-gray-100 rounded-bl-none border border-white/5' 
+                : 'bg-albania-red text-white rounded-br-none shadow-red-900/20'
+            }`;
+            
+            const content = document.createElement('div');
+            content.innerHTML = htmlText;
+
+            bubble.appendChild(content);
+            inner.appendChild(avatar);
+            inner.appendChild(bubble);
+            wrapper.appendChild(inner);
+
+            messagesList.appendChild(wrapper);
+            scrollToBottom();
+        }
+
+        function showTyping(show) {
+            isTyping = show;
+            if (show) {
+                typingIndicator.classList.remove('hidden');
+                scrollToBottom();
+            } else {
+                typingIndicator.classList.add('hidden');
+            }
+        }
+
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
