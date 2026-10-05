@@ -1,0 +1,16 @@
+{
+  "appId": "al.asistentidigjital.app",
+  "appName": "Asistenti Digjital",
+  "webDir": "www",
+  "backgroundColor": "#050505",
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "css",
+      "style": "DARK",
+      "initialViewportFitValueHint": "cover"
+    }
+  }
+}
